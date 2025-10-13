@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Order - Autronicas</title>
+  <link rel="stylesheet" href="job-order.css" />
+</head>
+<body>
+  <!-- SELECTION SECTION -->
+  <section id="choose-type" style="text-align:center; margin-bottom: 20px;">
+    <h2>Select Job Order Type</h2>
+    <button id="private-btn" class="btn-primary" style="padding:10px 25px; margin:5px;">Private</button>
+    <button id="lgu-btn" class="btn-secondary" style="padding:10px 25px; margin:5px;">LGU</button>
+  </section>
+
+  <!-- JOB ORDER FORM -->
+  <div class="job-order-container hidden" id="jobOrderContent">
+    <div class="header">
+      <img src="Logo.png" alt="Company Logo" class="logo" />
+      <div class="company-info">
+        <h1>AUTRONICAS</h1>
+        <h2>AUTO SERVICE AND SPARE PARTS CORP.</h2>
+        <p>
+          Maharlika Highway Sitio Bagong Tulay, Brgy. Bukal, Pagbilao, Quezon<br />
+          Contact Info: (042) 785-0428 | 0998-999-0252<br />
+          Email: autronicas.official@gmail.com
+        </p>
+      </div>
+    </div>
+
+    <h3 class="section-title" id="jobOrderTitle">JOB ORDER (Private)</h3>
+    <h4 class="job-order-number" style="text-align:right; margin-right:30px;">
+  Job Order No: <span id="jobOrderNumber">1</span></h4>
+
+
+    <table class="details-table">
+      <tr><td><strong>Name / Company:</strong></td><td colspan="3"><input type="text" /></td></tr>
+      <tr><td><strong>Address:</strong></td><td colspan="3"><input type="text" /></td></tr>
+      <tr><td><strong>Date:</strong></td><td><input type="date" /></td><td><strong>Time In:</strong></td><td><input type="text" /></td></tr>
+      <tr><td><strong>Vehicle Color:</strong></td><td><input type="text" /></td><td><strong>Motor Chasis:</strong></td><td><input type="text" /></td></tr>
+      <tr><td><strong>Plate No.:</strong></td><td><input type="text" /></td><td><strong>Fuel Level:</strong></td><td><input type="text" /></td></tr>
+      <tr><td><strong>Maker:</strong></td><td><input type="text" /></td><td><strong>Mileage:</strong></td><td><input type="text" /></td></tr>
+      <tr><td><strong>Model:</strong></td><td><input type="text" /></td><td><strong>Date Release:</strong></td><td><input type="date" /></td></tr>
+    </table>
+
+    <!-- LABOR SECTION -->
+    <table class="job-table">
+      <tr>
+        <th colspan="5">
+          <div class="section-header-content">
+            <span>LABOR</span>
+            <button class="add-btn" onclick="addRow('laborRows')">+ Add Row</button>
+          </div>
+        </th>
+      </tr>
+      <tr>
+        <th>JOB DESCRIPTION</th>
+        <th>QTY</th>
+        <th>UNIT</th>
+        <th>UNIT PRICE</th>
+        <th>AMOUNT</th>
+      </tr>
+      <tbody id="laborRows">
+        <tr>
+          <td><input type="text" placeholder="Enter labor details..." /></td>
+          <td><input type="number" min="1" placeholder="0" oninput="updateTotal()" /></td>
+          <td><input type="text" placeholder="pcs/hr" /></td>
+          <td><input type="number" min="0" placeholder="0.00" oninput="updateTotal()" /></td>
+          <td><input type="number" min="0" placeholder="0.00" readonly /></td>
+        </tr>
+      </tbody>
+
+      <!-- PARTS SECTION -->
+      <tr>
+        <th colspan="5">
+          <div class="section-header-content">
+            <span>PARTS</span>
+            <button class="add-btn" onclick="addRow('partsRows')">+ Add Row</button>
+          </div>
+        </th>
+      </tr>
+      <tr>
+        <th>JOB DESCRIPTION</th>
+        <th>QTY</th>
+        <th>UNIT</th>
+        <th>UNIT PRICE</th>
+        <th>AMOUNT</th>
+      </tr>
+      <tbody id="partsRows">
+        <tr>
+          <td><input type="text" placeholder="Enter part details..." /></td>
+          <td><input type="number" min="1" placeholder="0" oninput="updateTotal()" /></td>
+          <td><input type="text" placeholder="pcs" /></td>
+          <td><input type="number" min="0" placeholder="0.00" oninput="updateTotal()" /></td>
+          <td><input type="number" min="0" placeholder="0.00" readonly /></td>
+        </tr>
+      </tbody>
+
+      <tr>
+        <td colspan="4" class="total-label"><strong>TOTAL AMOUNT:</strong></td>
+        <td id="totalAmount"><strong>₱0.00</strong></td>
+      </tr>
+    </table>
+
+    <p class="note">I AGREE THAT ALL WORK HAS BEEN PERFORMED TO MY SATISFACTION.</p>
+
+    <div class="signatures">
+      <div>Mechanic/Technician</div>
+      <div>Mrs. Herminia Baracael<br /><small>Chief of Operation Officer</small></div>
+      <div>Mao Yulde<br /><small>Chief Mechanic</small></div>
+    </div>
+
+    <div class="received-section">
+      <p>Received by: ___________________________</p>
+      <p>(Signature over printed name)</p>
+    </div>
+  </div>
+
+  <div class="actions" style="text-align:center; margin-top:20px;">
+    <button onclick="printJobOrder()">🖨 Print Job Order</button>
+  </div>
+
+<script>
+/* ---------- Elements ---------- */
+const chooseSection = document.getElementById('choose-type');
+const jobOrderContent = document.getElementById('jobOrderContent');
+const jobOrderTitle = document.getElementById('jobOrderTitle');
+const jobOrderNumberEl = document.getElementById('jobOrderNumber');
+const privateBtn = document.getElementById('private-btn');
+const lguBtn = document.getElementById('lgu-btn');
+
+let currentType = "Private";
+let currentOrderNo = 1;
+
+/* ---------- Storage helpers ---------- */
+function storageGet() {
+  return JSON.parse(localStorage.getItem('jobOrdersData')) || {};
+}
+function storageSet(obj) {
+  localStorage.setItem('jobOrdersData', JSON.stringify(obj));
+}
+function storageKey(type, no) {
+  return `${type}_${no}`; // stable key per type+number
+}
+
+/* ---------- Start (type buttons) ---------- */
+privateBtn.onclick = () => startType('Private');
+lguBtn.onclick = () => startType('LGU');
+
+function startType(type) {
+  currentType = type;
+
+  // find highest job order number for this type
+  const data = storageGet();
+  const existing = Object.keys(data)
+    .filter(k => k.startsWith(type + "_"))
+    .map(k => parseInt(k.split("_")[1]))
+    .filter(n => !isNaN(n));
+
+  const maxNo = existing.length ? Math.max(...existing) : 0;
+  currentOrderNo = maxNo + 1;
+
+  chooseSection.style.display = 'none';
+  jobOrderContent.classList.remove('hidden');
+  jobOrderTitle.textContent = `JOB ORDER (${type})`;
+  ensureTopBar();
+  loadOrder(type, currentOrderNo);
+  refreshSavedSelect();
+}
+
+/* ---------- UI Top bar (prev / save / next / saved list) ---------- */
+function ensureTopBar() {
+  if (document.getElementById('jobTopBar')) return; // already created
+
+  const top = document.createElement('div');
+  top.id = 'jobTopBar';
+  top.style.textAlign = 'center';
+  top.style.margin = '10px 0';
+  top.innerHTML = `
+    <button id="prevBtn">⬅</button>
+    <button id="saveBtn">💾 Save</button>
+    <button id="nextBtn">➡</button>
+    <select id="savedList" style="margin-left:12px; padding:4px;">
+      <option value="">📜 View Saved Orders</option>
+    </select>
+  `;
+  jobOrderContent.parentNode.insertBefore(top, jobOrderContent);
+
+  document.getElementById('prevBtn').onclick = () => changeOrder(-1);
+  document.getElementById('nextBtn').onclick = () => changeOrder(1);
+  document.getElementById('saveBtn').onclick = () => { saveOrder(); refreshSavedSelect(); };
+  document.getElementById('savedList').onchange = (e) => {
+    if (!e.target.value) return;
+    const [type, no] = e.target.value.split('__');
+    loadOrder(type, parseInt(no, 10));
+  };
+}
+
+/* ---------- Change order (prev/next) ---------- */
+function changeOrder(dir) {
+  saveOrder(); // always save before switching
+  let next = currentOrderNo + dir;
+  if (next < 1) next = 1;
+  loadOrder(currentType, next);
+  refreshSavedSelect();
+}
+
+/* ---------- Save current order (reliable) ---------- */
+function saveOrder() {
+  const data = storageGet();
+  const key = storageKey(currentType, currentOrderNo);
+
+  // Save details inputs (by position) — this is the key fix
+  const detailsInputs = Array.from(document.querySelectorAll('.details-table input'));
+  const detailsArray = detailsInputs.map(i => i.value);
+
+  // Save labor/parts tbody innerHTML
+  const laborHTML = document.getElementById('laborRows').innerHTML;
+  const partsHTML = document.getElementById('partsRows').innerHTML;
+  const totalHTML = document.getElementById('totalAmount').innerHTML;
+
+  data[key] = {
+    type: currentType,
+    number: currentOrderNo,
+    details: detailsArray,   // array - stable order
+    laborHTML,
+    partsHTML,
+    totalHTML,
+    savedAt: new Date().toISOString()
+  };
+
+  storageSet(data);
+  // user feedback (optional)
+  //alert(`Saved: ${currentType} #${currentOrderNo}`);
+}
+
+/* ---------- Load order (restore details by index) ---------- */
+function loadOrder(type, number) {
+  const data = storageGet();
+  const key = storageKey(type, number);
+  currentType = type;
+  currentOrderNo = number;
+  jobOrderNumberEl.textContent = number;
+  jobOrderTitle.textContent = `JOB ORDER (${type})`;
+
+  const detailsInputs = Array.from(document.querySelectorAll('.details-table input'));
+  const laborBody = document.getElementById('laborRows');
+  const partsBody = document.getElementById('partsRows');
+
+  if (data[key]) {
+    const rec = data[key];
+    // restore details by index — this is the reliable mapping
+    detailsInputs.forEach((inp, idx) => {
+      inp.value = rec.details[idx] !== undefined ? rec.details[idx] : '';
+    });
+    laborBody.innerHTML = rec.laborHTML || '';
+    partsBody.innerHTML = rec.partsHTML || '';
+    document.getElementById('totalAmount').innerHTML = rec.totalHTML || '<strong>₱0.00</strong>';
+  } else {
+    // fresh: clear fields and set one default row each
+    detailsInputs.forEach(inp => inp.value = '');
+    laborBody.innerHTML = defaultLaborRow();
+    partsBody.innerHTML = defaultPartsRow();
+    document.getElementById('totalAmount').innerHTML = '<strong>₱0.00</strong>';
+  }
+  refreshSavedSelect();
+}
+
+/* ---------- Refresh saved dropdown list ---------- */
+function refreshSavedSelect() {
+  const select = document.getElementById('savedList');
+  if (!select) return;
+  const data = storageGet();
+
+  // build sorted list: Private_1, Private_2, LGU_1... but keep simple
+  select.innerHTML = '<option value="">📜 View Saved Orders</option>';
+  Object.keys(data).sort().forEach(k => {
+    const rec = data[k];
+    const opt = document.createElement('option');
+    opt.value = `${rec.type}__${rec.number}`;
+    opt.textContent = `${rec.type} #${rec.number} — ${rec.savedAt ? rec.savedAt.split('T')[0] : ''}`;
+    if (rec.type === currentType && rec.number === currentOrderNo) opt.selected = true;
+    select.appendChild(opt);
+  });
+}
+
+/* ---------- Default row HTML ---------- */
+function defaultLaborRow() {
+  return `
+    <tr>
+      <td><input type="text" placeholder="Enter labor details..." /></td>
+      <td><input type="text" placeholder="Qty" oninput="updateTotal()" /></td>
+      <td><input type="text" placeholder="pcs/hr" /></td>
+      <td><input type="number" placeholder="0.00" oninput="updateTotal()" /></td>
+      <td><input type="number" readonly /></td>
+    </tr>`;
+}
+function defaultPartsRow() {
+  return `
+    <tr>
+      <td><input type="text" placeholder="Enter part details..." /></td>
+      <td><input type="text" placeholder="Qty" oninput="updateTotal()" /></td>
+      <td><input type="text" placeholder="pcs" /></td>
+      <td><input type="number" placeholder="0.00" oninput="updateTotal()" /></td>
+      <td><input type="number" readonly /></td>
+    </tr>`;
+}
+
+/* ---------- Add row (preserve event handlers) ---------- */
+function addRow(sectionId) {
+  const tbody = document.getElementById(sectionId);
+  if (sectionId === 'laborRows') tbody.insertAdjacentHTML('beforeend', defaultLaborRow());
+  else tbody.insertAdjacentHTML('beforeend', defaultPartsRow());
+}
+
+/* ---------- Update total (reads current rows) ---------- */
+function updateTotal() {
+  let total = 0;
+  document.querySelectorAll("#laborRows tr, #partsRows tr").forEach(row => {
+    const qInp = row.children[1].querySelector('input');
+    const pInp = row.children[3].querySelector('input');
+    const qty = parseFloat(qInp?.value.replace(/[^0-9.]/g, '')) || 0;
+    const price = parseFloat(pInp?.value) || 0;
+    const amt = qty * price;
+    const amtInp = row.children[4].querySelector('input');
+    if (amtInp) amtInp.value = amt.toFixed(2);
+    total += amt;
+  });
+  document.getElementById('totalAmount').innerHTML = `<strong>₱${total.toFixed(2)}</strong>`;
+}
+
+/* ---------- Print (optional: keep saved) ---------- */
+function printJobOrder() {
+  // ensure saved before printing
+  saveOrder();
+  window.print();
+  // keep data saved (do not delete) unless you want to remove on print
+}
+
+/* ---------- Init helpers for outside calls ---------- */
+window.addRow = addRow;
+window.updateTotal = updateTotal;
+window.printJobOrder = printJobOrder;
+
+/* ---------- Safety: if user reloads page while editing, don't lose last loaded order */
+window.addEventListener('beforeunload', () => {
+  // optional auto-save: uncomment if you want auto-save on reload
+  // saveOrder();
+});
+
+/* ---------- SRP Calculation Based on Type (Private/LGU) ---------- */
+function calculateSRP(unitPrice) {
+  let srp = 0;
+  if (currentType === "LGU") {
+    srp = unitPrice * 1.6;
+  } else {
+    srp = unitPrice * 1.25;
+  }
+  return Math.ceil(srp / 10) * 10; // round up to nearest ₱10
+}
+
+/* ---------- Update Total (with automatic SRP) ---------- */
+function updateTotal() {
+  let total = 0;
+  document.querySelectorAll("#laborRows tr, #partsRows tr").forEach(row => {
+    const qtyInput = row.children[1].querySelector('input');
+    const priceInput = row.children[3].querySelector('input');
+    const amountInput = row.children[4].querySelector('input');
+
+    let qty = parseFloat(qtyInput?.value.replace(/[^0-9.]/g, '')) || 0;
+    let basePrice = parseFloat(priceInput?.value) || 0;
+
+    // Auto-calculate SRP based on current job order type
+    const finalPrice = calculateSRP(basePrice);
+
+    // Update displayed unit price in the input to show the SRP
+    if (!isNaN(finalPrice) && basePrice > 0) {
+      priceInput.value = finalPrice.toFixed(2);
+    }
+
+    // Compute amount normally
+    const amount = qty * finalPrice;
+    if (amountInput) amountInput.value = amount.toFixed(2);
+    total += amount;
+  });
+
+  document.getElementById('totalAmount').innerHTML = `<strong>₱${total.toFixed(2)}</strong>`;
+}
+
+/* ---------- Update SRP when switching type ---------- */
+function startType(type) {
+  currentType = type;
+
+  // find highest job order number for this type
+  const data = storageGet();
+  const existing = Object.keys(data)
+    .filter(k => k.startsWith(type + "_"))
+    .map(k => parseInt(k.split("_")[1]))
+    .filter(n => !isNaN(n));
+
+  const maxNo = existing.length ? Math.max(...existing) : 0;
+  currentOrderNo = maxNo + 1;
+
+  chooseSection.style.display = 'none';
+  jobOrderContent.classList.remove('hidden');
+  jobOrderTitle.textContent = `JOB ORDER (${type})`;
+  ensureTopBar();
+  loadOrder(type, currentOrderNo);
+  refreshSavedSelect();
+
+  // Recalculate totals using the correct SRP rule for this type
+  updateTotal();
+}
+</script>
+</body>
+</html>
