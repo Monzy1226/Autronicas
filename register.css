@@ -1,0 +1,120 @@
+/* ---------- REGISTER PAGE ---------- */
+.register-page {
+  background-color: #f7f8fa;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  font-family: "Poppins", sans-serif;
+}
+
+.register-container {
+  display: flex;
+  width: 100%;
+}
+
+/* LEFT SIDE */
+.register-left {
+  flex: 1;
+  background-color: #fffef6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-box {
+  background: #fff;
+  width: 100%;
+  max-width: 360px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  padding: 40px 30px;
+  text-align: center;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.register-box h2 {
+  font-size: 22px;
+  color: #222;
+  margin-bottom: 20px;
+}
+
+.register-box .input-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.btn-register {
+  width: 100%;
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-register:hover {
+  background-color: #003e80;
+}
+
+.register-box .signup-text {
+  font-size: 13px;
+  color: #555;
+  margin-top: 20px;
+}
+
+.register-box .link {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+.register-box .link:hover {
+  text-decoration: underline;
+}
+
+/* RIGHT SIDE */
+.register-right {
+  flex: 1;
+  background-color: #e6e7e8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-right .logo {
+  width: 60%;
+  max-width: 400px;
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* ANIMATIONS */
+.fade-in {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.slide-left {
+  animation: slideLeft 1s forwards;
+}
+
+.slide-right {
+  animation: slideRight 1s forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideLeft {
+  to { transform: translateX(-100%); opacity: 0; }
+}
+
+@keyframes slideRight {
+  to { transform: translateX(100%); opacity: 0; }
+}

@@ -1,0 +1,569 @@
+/* ====== Base Layout ====== */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #e9f2ff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+}
+
+.job-order-container {
+  background: white;
+  padding: 30px;
+  border: 2px solid #333;
+  width: 100%;
+  max-width: 850px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  overflow-x: hidden; /* prevent horizontal scroll or breaking */
+}
+
+/* ====== Header ====== */
+.header {
+  display: flex;
+  align-items: center;
+  border-bottom: 3px solid #f0b800;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.logo {
+  width: 120px;
+  height: auto;
+  margin-right: 20px;
+}
+
+.company-info h1 {
+  color: #d4a017;
+  margin: 0;
+  font-size: 24px;
+}
+
+.company-info h2 {
+  color: #333;
+  margin: 0;
+  font-size: 16px;
+}
+
+.company-info p {
+  font-size: 12px;
+  color: #555;
+}
+
+/* ====== Section Titles ====== */
+.section-title {
+  background: #f0b800;
+  text-align: center;
+  padding: 5px;
+  font-weight: bold;
+  border: 1px solid #333;
+}
+
+/* ====== Details Table ====== */
+.details-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid #000; /* visible outer line */
+  margin-top: 10px;
+  table-layout: fixed; /* prevents resizing when deleting text */
+}
+
+.details-table td {
+  border: 1px solid #000; /* visible inner grid lines */
+  padding: 6px 10px;
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+.line-input {
+  border: none;
+  border-bottom: 1px solid #000; /* thin underline for typing */
+  outline: none;
+  width: 250px;
+  font-size: 14px;
+  margin-left: 5px;
+}
+
+.line-input:focus {
+  border-bottom: 2px solid #333; /* darker line when typing */
+}
+
+/* ====== Job Table ====== */
+.job-table th {
+  background: #f0b800;
+  text-align: center;
+}
+
+.job-table input[type="text"],
+.job-table input[type="number"] {
+  width: 100%;
+  height: 30px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.total-label {
+  text-align: right;
+}
+
+/* ====== Notes and Signatures ====== */
+.note {
+  text-align: center;
+  font-weight: bold;
+  border-top: 1px solid #333;
+  padding-top: 10px;
+}
+
+.signatures {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.signatures div {
+  width: 30%;
+  font-size: 12px;
+}
+
+.received-section {
+  text-align: center;
+  font-size: 12px;
+  margin-top: 30px;
+}
+
+/* ====== Buttons ====== */
+.actions {
+  margin-top: 20px;
+}
+
+button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+.add-btn {
+  background-color: #004aad;
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.add-btn:hover {
+  background-color: #003580;
+}
+
+.remove-btn {
+  background-color: #e53935;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  margin-left: 6px;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+
+.remove-btn:hover {
+  background-color: #c62828;
+}
+
+.section-header-content {
+  display: flex;
+  justify-content: space-between; /* LABOR left, +Add Row right */
+  align-items: center;
+  background: inherit;
+  width: 100%;
+}
+
+/* ====== Print Styles ====== */
+@media print {
+  /* Hide all buttons, dropdowns, and inputs used for navigation or saving */
+  #choose-type,
+  .actions,
+  .add-btn,
+  .remove-btn,
+  .save-buttons,
+  button,
+  select {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Scale and adjust for A4 or Long Bond automatically */
+  .job-order-container {
+    transform: scale(0.95);
+    transform-origin: top center;
+  }
+
+  html, body {
+    background: white;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  @page {
+    size: auto;
+    margin: 0.3in;
+  }
+
+  .job-order-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    border: 1px solid #000;
+    box-shadow: none;
+    padding: 20px;
+    overflow: visible;
+    transform: scale(1);
+    transform-origin: top center;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  td, th {
+    border: 1px solid #000;
+    padding: 2px 4px !important;
+    font-size: 10px !important;
+    word-wrap: break-word;
+  }
+
+  .details-table input,
+  .job-table input {
+    font-size: 10px !important;
+    padding: 2px !important;
+  }
+
+  /* Compact spacing */
+  h1, h2, h3, p {
+    margin: 2px 0 !important;
+  }
+}
+
+/* ====== Show Job Order No. only when printing ====== */
+.job-order-number {
+  display: none;
+}
+
+@media print {
+  .job-order-number {
+    display: block !important;
+  }
+}
+
+/* ====== Details Table Formatting ====== */
+.details-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  border: 1px solid #000; /* optional outer border */
+  margin-top: 10px;
+}
+
+.details-table tr,
+.details-table td {
+  border: none; /* remove inner lines */
+  padding: 8px;
+  height: 40px; /* consistent row height */
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+/* Force all columns to be equal even if row has fewer cells */
+.details-table td {
+  width: 33.33%;
+}
+
+/* Label styling */
+.details-table strong {
+  font-weight: 600;
+  display: inline-block;
+  min-width: 100px;
+}
+
+/* Input fields */
+.details-table input {
+  width: 70%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  padding: 2px 4px;
+}
+
+/* Print-friendly */
+@media print {
+  .details-table {
+    border: 1px solid #000;
+  }
+
+  .details-table input {
+    border: none;
+    background: transparent;
+  }
+}
+
+/* ====== Centered Header Layout ====== */
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.logo {
+  width: 100px;
+  height: auto;
+  margin-bottom: 8px;
+}
+
+.company-info h1 {
+  font-size: 26px;
+  margin: 0;
+  font-weight: bold;
+}
+
+.company-info h2 {
+  font-size: 16px;
+  margin: 4px 0;
+  font-weight: normal;
+}
+
+.company-info p {
+  font-size: 13px;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ====== Job Header Line ====== */
+.job-header-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.job-header-line h3,
+.job-header-line h4 {
+  margin: 0;
+  font-weight: bold;
+}
+
+/* ====== Inline Underline Style for Job Info (Name / Company, Address, Contact No.) ====== */
+.job-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-top: 3px solid #000; /* top line only */
+  padding-top: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+  line-height: 0.5;
+}
+
+.job-info label {
+  font-weight: bold;
+  display: inline;
+  margin-right: 5px;
+}
+
+.job-info input {
+  display: inline-block;
+  border: none;
+  border-bottom: 1px solid #000;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+  padding: 0px 2px;
+  width: 220px; /* adjust width for balance */
+  vertical-align: middle;
+  line-height: 0.5;
+}
+
+.job-info input:focus {
+  border-bottom: 2px solid #000;
+}
+
+.job-info .left {
+  flex: 1;
+}
+
+.job-info .right {
+  text-align: right;
+}
+
+/* Make Address full width but inline with underline */
+.job-info .address-line {
+  width: 100%;
+  margin-top: 5px;
+}
+
+.job-info .address-line input {
+  width: 98%; /* full underline width */
+}
+
+
+/* ====== Visible Underline Inline Style for Details Table ====== */
+.details-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  table-layout: fixed;
+}
+
+.details-table td {
+  padding: 2px 6px;
+  height: 24px;
+  vertical-align: middle;
+  line-height: 0;
+}
+
+.details-table strong {
+  display: inline;
+  font-weight: 600;
+  margin-right: 5px;
+}
+
+.details-table input {
+  display: inline-block;
+  vertical-align: middle;
+  border: none;
+  border-bottom: 1px solid #000; /* visible underline */
+  background: transparent;
+  outline: none;
+  font-size: 12.5px;
+  width: 50%;
+  padding: 0px 2px;
+  margin-left: 3px;
+  line-height: 0;
+}
+
+.details-table input:focus {
+  border-bottom: 2px solid #000; /* thicker when typing */
+}
+
+.details-table td {
+  width: 30%;;
+}
+
+/* ====== Job Tables ====== */
+.job-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid #000;
+  margin-top: 15px;
+  table-layout: fixed;
+}
+
+.job-table th,
+.job-table td {
+  border: 1px solid #000;
+  padding: 5px 8px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.job-table th {
+  background-color: #f0b800;
+  font-weight: bold;
+}
+
+/* ====== Section Header (LABOR / PARTS) ====== */
+.section-header th {
+  background-color: #d4a017;
+  color: #000;
+  font-weight: bold;
+  border: 2px solid #000;
+  padding: 0;
+}
+
+.section-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.section-title-text {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+}
+
+/* ====== Input Fields ====== */
+.job-table input[type="text"],
+.job-table input[type="number"] {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  border-bottom: 1px solid #000;
+  padding: 3px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.job-table input[type="number"]::-webkit-inner-spin-button,
+.job-table input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+/* ====== Amount Field ====== */
+.amount-input {
+  text-align: right;
+  font-weight: bold;
+  border-bottom: 1px solid #000;
+}
+
+/* ====== Add Button ====== */
+.add-btn {
+  background-color: #004aad;
+  color: white;
+  border: 1px solid #000;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.add-btn:hover {
+  background-color: #003580;
+}
+
+/* ====== Total Section ====== */
+.total-label {
+  text-align: right;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 8px;
+}

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sales Management | Autronicas</title>
+  <link rel="stylesheet" href="sales.css" />
+</head>
+<body>
+<header class="navbar">
+  <div class="logo">Inventory Management System</div>
+  <nav>
+    <a href="dashboard.html"><strong>Dashboard</strong></a>
+    <a href="inventory.html"><strong>Inventory</strong></a>
+    <a href="sales.html" class="active"><strong>Sales</strong></a>
+    <a href="login.html"><strong>Logout</strong></a>
+  </nav>
+</header>
+
+<main class="container fade-in">
+
+  <div class="cards">
+    <div class="card">
+      <h4>Daily Summary Report</h4>
+      <p>Total Sales: ₱<span id="dailyTotal">0.00</span></p>
+    </div>
+
+    <div class="card">
+      <h4>View Sales by Date</h4>
+      <input type="date" id="viewSalesDate" />
+      <p>Showing sales for: <span id="selectedDate"></span></p>
+      <p>Total Sales: ₱<span id="salesByDateTotal">0.00</span></p>
+    </div>
+
+    <div class="card">
+      <h4>Sales by Date Range</h4>
+      <label>Start: <input type="date" id="startDate" /></label>
+      <label>End: <input type="date" id="endDate" /></label>
+      <p>Total: ₱<span id="salesByRangeTotal">0.00</span></p>
+    </div>
+  </div>
+
+  <div class="top-bar">
+    <h2>Sales Management</h2>
+    <button id="addSaleBtn" class="btn-add">＋ Add Job Order</button>
+  </div>
+
+  <h3>Sales Log</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Job Order No.</th>
+        <th>Vehicle / Plate No.</th>
+        <th>Total Labor (₱)</th>
+        <th>Total Parts Price (₱)</th>
+        <th>Unit Price (₱)</th>
+        <th>Total SRP (₱)</th>
+        <th>Profit (₱)</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="salesTableBody"></tbody>
+  </table>
+</main>
+
+<!-- Add/Edit Job Order Modal -->
+<div id="saleModal" class="modal hidden">
+  <div class="modal-content slide-up">
+    <h2 id="modalTitle">Add Job Order</h2>
+    <input type="text" id="vehiclePlate" placeholder="Vehicle / Plate No." />
+    <input type="number" id="laborTotal" placeholder="Total Labor (₱)" />
+    <input type="number" id="partsTotal" placeholder="Total Parts Price (₱)" />
+    <input type="number" id="unitPrice" placeholder="Unit Price / Cost (₱)" />
+    <input type="number" id="srpTotal" placeholder="Total SRP (₱)" readonly />
+    <button id="saveSale" class="btn-primary">Save</button>
+    <button id="closeModal" class="btn-secondary">Cancel</button>
+  </div>
+</div>
+<script>
+let sales = JSON.parse(localStorage.getItem('sales')) || [];
+let editingSaleNo = null;
+
+const salesTableBody = document.getElementById('salesTableBody');
+const saleModal = document.getElementById('saleModal');
+const saveSaleBtn = document.getElementById('saveSale');
+const addSaleBtn = document.getElementById('addSaleBtn');
+const closeModal = document.getElementById('closeModal');
+const dailyTotalEl = document.getElementById('dailyTotal');
+
+/* ===== GET NEXT JOB ORDER NO ===== */
+function getNextJobOrderNo() {
+  if (sales.length === 0) return 1;
+  return Math.max(...sales.map(s => s.jobOrderNo)) + 1;
+}
+
+/* ===== RENDER SALES ===== */
+function renderSales(filteredSales = null) {
+  const data = filteredSales || sales;
+  salesTableBody.innerHTML = '';
+
+  data.forEach((sale) => {
+    const profit = sale.srpTotal - sale.unitPrice;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${sale.date}</td>
+      <td>${sale.jobOrderNo}</td>
+      <td>${sale.vehiclePlate}</td>
+      <td>₱${sale.laborTotal.toFixed(2)}</td>
+      <td>₱${sale.partsTotal.toFixed(2)}</td>
+      <td>₱${sale.unitPrice.toFixed(2)}</td>
+      <td>₱${sale.srpTotal.toFixed(2)}</td>
+      <td>₱${profit.toFixed(2)}</td>
+      <td>${sale.confirmed ? "✅ Confirmed" : "🕓 Pending"}</td>
+      <td>
+        ${!sale.confirmed ? `
+          <button onclick="editSale(${sale.jobOrderNo})">Edit</button>
+          <button onclick="confirmSale(${sale.jobOrderNo})">Confirm</button>
+        ` : `<button disabled>Locked</button>`}
+      </td>
+    `;
+    salesTableBody.appendChild(tr);
+  });
+
+  const total = data.reduce((sum, s) => sum + s.srpTotal, 0);
+  dailyTotalEl.textContent = total.toFixed(2);
+}
+
+/* ===== AUTO-CALCULATE SRP (LABOR + PARTS) ===== */
+document.getElementById('laborTotal').addEventListener('input', updateSRP);
+document.getElementById('partsTotal').addEventListener('input', updateSRP);
+
+function updateSRP() {
+  const labor = parseFloat(document.getElementById('laborTotal').value) || 0;
+  const parts = parseFloat(document.getElementById('partsTotal').value) || 0;
+  document.getElementById('srpTotal').value = (labor + parts).toFixed(2);
+}
+
+/* ===== ADD SALE ===== */
+addSaleBtn.onclick = () => {
+  editingSaleNo = null;
+  document.getElementById('modalTitle').textContent = "Add Job Order";
+  ['vehiclePlate', 'laborTotal', 'partsTotal', 'unitPrice', 'srpTotal'].forEach(id => document.getElementById(id).value = '');
+  saveSaleBtn.textContent = "Save";
+  saleModal.classList.remove('hidden');
+};
+
+closeModal.onclick = () => saleModal.classList.add('hidden');
+
+/* ===== SAVE SALE ===== */
+saveSaleBtn.onclick = () => {
+  const vehiclePlate = document.getElementById('vehiclePlate').value.trim();
+  const laborTotal = parseFloat(document.getElementById('laborTotal').value) || 0;
+  const partsTotal = parseFloat(document.getElementById('partsTotal').value) || 0;
+  const unitPrice = parseFloat(document.getElementById('unitPrice').value) || 0;
+  const srpTotal = laborTotal + partsTotal;
+
+  if (!vehiclePlate) return alert("Please enter the Vehicle/Plate No.");
+
+  const date = new Date().toLocaleDateString('en-CA');
+  let jobOrderNo;
+
+  if (editingSaleNo) {
+    jobOrderNo = editingSaleNo;
+    const index = sales.findIndex(s => s.jobOrderNo === jobOrderNo);
+    if (index !== -1 && !sales[index].confirmed) {
+      sales[index] = {
+        ...sales[index],
+        vehiclePlate,
+        laborTotal,
+        partsTotal,
+        unitPrice,
+        srpTotal
+      };
+    } else {
+      return alert("Confirmed job orders cannot be edited.");
+    }
+  } else {
+    jobOrderNo = getNextJobOrderNo();
+    const newSale = {
+      date,
+      jobOrderNo,
+      vehiclePlate,
+      laborTotal,
+      partsTotal,
+      unitPrice,
+      srpTotal,
+      confirmed: false
+    };
+    sales.push(newSale);
+  }
+
+  // Save to localStorage and refresh list
+  localStorage.setItem('sales', JSON.stringify(sales));
+  saleModal.classList.add('hidden');
+  editingSaleNo = null;
+  renderSales(); // ⬅ refresh the Sales Log immediately
+};
+
+/* ===== EDIT SALE ===== */
+function editSale(jobOrderNo) {
+  const sale = sales.find(s => s.jobOrderNo === jobOrderNo);
+  if (!sale) return;
+  if (sale.confirmed) return alert("Confirmed job orders cannot be edited.");
+
+  editingSaleNo = sale.jobOrderNo;
+  document.getElementById('modalTitle').textContent = "Edit Job Order";
+  document.getElementById('vehiclePlate').value = sale.vehiclePlate;
+  document.getElementById('laborTotal').value = sale.laborTotal;
+  document.getElementById('partsTotal').value = sale.partsTotal;
+  document.getElementById('unitPrice').value = sale.unitPrice;
+  document.getElementById('srpTotal').value = sale.srpTotal;
+  saleModal.classList.remove('hidden');
+}
+
+/* ===== CONFIRM SALE ===== */
+function confirmSale(jobOrderNo) {
+  const index = sales.findIndex(s => s.jobOrderNo === jobOrderNo);
+  if (index !== -1) {
+    if (confirm("Are you sure you want to confirm this Job Order? Once confirmed, it cannot be edited.")) {
+      sales[index].confirmed = true;
+      localStorage.setItem('sales', JSON.stringify(sales));
+      renderSales();
+    }
+  }
+}
+
+/* ===== FILTER SALES ===== */
+document.getElementById('viewSalesDate').onchange = (e) => {
+  const date = e.target.value;
+  document.getElementById('selectedDate').textContent = date;
+  const filtered = sales.filter(s => s.date === date);
+  renderSales(filtered);
+  const total = filtered.reduce((sum, s) => sum + s.srpTotal, 0);
+  document.getElementById('salesByDateTotal').textContent = total.toFixed(2);
+};
+
+document.getElementById('startDate').onchange = calculateRange;
+document.getElementById('endDate').onchange = calculateRange;
+
+function calculateRange() {
+  const start = document.getElementById('startDate').value;
+  const end = document.getElementById('endDate').value;
+  if (!start || !end) return;
+  const filtered = sales.filter(s => s.date >= start && s.date <= end);
+  renderSales(filtered);
+  const total = filtered.reduce((sum, s) => sum + s.srpTotal, 0);
+  document.getElementById('salesByRangeTotal').textContent = total.toFixed(2);
+}
+
+/* ===== INITIAL LOAD ===== */
+renderSales();
+</script>
+</body>
+</html>
