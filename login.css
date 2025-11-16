@@ -1,0 +1,174 @@
+/* ---------- LOGIN PAGE ---------- */
+.login-page {
+  background-color: #f7f8fa;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  font-family: "Poppins", sans-serif;
+}
+
+.login-container {
+  display: flex;
+  width: 100%;
+}
+
+/* LEFT SIDE */
+.login-left {
+  flex: 1;
+  background-color: #e6e7e8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-left .logo {
+  width: 60%;
+  max-width: 400px;
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* RIGHT SIDE */
+.login-right {
+  flex: 1;
+  background-color: #fffef6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.login-box {
+  background: #fff;
+  width: 100%;
+  max-width: 360px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  padding: 40px 30px;
+  text-align: center;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.login-box h2 {
+  font-size: 22px;
+  color: #222;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+.input-group {
+  text-align: left;
+  margin-bottom: 15px;
+}
+
+.input-group label {
+  font-size: 13px;
+  color: #333;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0 20px;
+  font-size: 13px;
+}
+
+.remember-forgot label {
+  color: #333;
+}
+
+.forgot {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+.btn-primary {
+  width: 100%;
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #003e80;
+}
+
+.divider {
+  margin: 20px 0;
+  color: #aaa;
+  position: relative;
+  text-align: center;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  position: absolute;
+  width: 45%;
+  height: 1px;
+  background-color: #ddd;
+  top: 50%;
+}
+
+.divider::before {
+  left: 0;
+}
+.divider::after {
+  right: 0;
+}
+
+.btn-google {
+  width: 100%;
+  background: white;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-google:hover {
+  background: #f7f7f7;
+}
+
+.signup-text {
+  font-size: 13px;
+  color: #555;
+  margin-top: 20px;
+}
+
+.signup-text .link {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+.signup-text .link:hover {
+  text-decoration: underline;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

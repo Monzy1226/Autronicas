@@ -1,0 +1,27 @@
+<?php
+require_once __DIR__ . '/auth.php';
+requireLogin();
+checkSessionTimeout();
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Autronicas | Choose Action</title>
+  <link rel="stylesheet" href="home.css" />
+</head>
+<body>
+  <div class="center-box">
+    <div class="logo-wrap">
+      <img src="Logo.png" alt="Autronicas Logo" class="logo">
+    </div>
+
+    <div class="button-row">
+      <button class="choice" onclick="location.href='job-order.php'">Create Job Order</button>
+      <button class="choice" onclick="location.href='dashboard.php'">Proceed to Inventory Dashboard</button>
+    </div>
+  </div>
+</body>
+</html>
+
